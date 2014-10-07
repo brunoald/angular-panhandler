@@ -1,17 +1,18 @@
-/*! angular-panhandler - v0.0.1 - 2013-12-05
-* Copyright (c) 2013 ; Licensed  */
-/*! angular-panhandler - v0.0.1 - 2013-12-05
-* Copyright (c) 2013 ; Licensed  */
+/*! angular-panhandler - v0.0.2 - 2014-10-07
+* Copyright (c) 2014 ; Licensed  */
+/*! angular-panhandler - v0.0.2 - 2014-10-07
+* Copyright (c) 2014 ; Licensed  */
 (function(){
   'use strict';
   angular.module('panhandler', [])
     .directive('panhandler', function PanhandlerFactory($document) {
       PanhandlerFactory.$inject = ['$document'];
-      function Panhandler ($el, attr) {
+      function Panhandler ($el, attr, scope) {
         this.$el = $el;
+        this.scope = scope;
         this.contentWidth = attr.contentWidth;
         this.contentHeight = attr.contentHeight;
-
+        this.stopDrag = attr.stopDrag;
         this.curr = [];
         this.origin = [];
         this.startPos = [];
@@ -90,6 +91,9 @@
           this.tick();
         },
         updateDrag: function(e){
+          if (this.scope.$eval(this.stopDrag) === true) {
+            return false;
+          }
           var curr = this.positionFromEvent(e);
           if(curr[0] !== this.curr[0] || curr[1] !== this.curr[1]){
             this.dirty = true;
@@ -150,7 +154,7 @@
       return {
         link: function link(scope,element,attr){
           setTimeout(function(){
-            new Panhandler(element,attr);
+            new Panhandler(element,attr,scope);
           });
         }
       };
